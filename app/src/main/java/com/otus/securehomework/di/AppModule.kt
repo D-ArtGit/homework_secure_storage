@@ -1,11 +1,16 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.security.CipherUtils
+import com.otus.securehomework.security.Keys
+import com.otus.securehomework.security.KeysImpl
+import com.otus.securehomework.security.KeysLessThanMImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +25,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRemoteDataSource(
-        userPreferences: UserPreferences
+        userPreferences: UserPreferences,
     ): RemoteDataSource {
         return RemoteDataSource(userPreferences)
     }
@@ -42,23 +47,36 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        cipherUtils: CipherUtils,
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, cipherUtils)
     }
 
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
-        userPreferences: UserPreferences
+        userPreferences: UserPreferences,
     ): AuthRepository {
         return AuthRepository(authApi, userPreferences)
     }
 
     @Provides
     fun provideUserRepository(
-        userApi: UserApi
+        userApi: UserApi,
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideKeys(
+        @ApplicationContext context: Context,
+    ): Keys {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            KeysImpl()
+        } else {
+            KeysLessThanMImpl(context)
+        }
     }
 }
