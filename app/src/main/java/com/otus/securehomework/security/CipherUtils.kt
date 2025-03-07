@@ -37,13 +37,7 @@ class CipherUtils @Inject constructor(keys: Keys) {
 
     companion object {
         const val KEY_PROVIDER = "AndroidKeyStore"
-        const val AES_KEY_ALIAS = "AES_HOMEWORK"
         const val AES_ALGORITHM = "AES"
-        const val KEY_LENGTH = 256
-        const val RSA_ALGORITHM = "RSA"
         const val SHARED_PREFERENCE_NAME = "AppSharedPreferences"
-        const val ENCRYPTED_KEY_NAME = "RSAEncryptedKeysKeyName"
-        const val RSA_MODE_LESS_THAN_M = "RSA/ECB/PKCS1Padding"
-        const val RSA_KEY_ALIAS = "RSA_HOMEWORK"
     }
 }
